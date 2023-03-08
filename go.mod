@@ -1,9 +1,8 @@
-module verifier
+module github.com/1mt142/verifier
 
 go 1.20
 
 require (
-	github.com/1mt142/verifier v0.0.0-20230306024010-a054667f34ea
 	github.com/gin-gonic/gin v1.9.0
 	github.com/joho/godotenv v1.5.1
 	gorm.io/driver/postgres v1.4.8

@@ -2,6 +2,7 @@ FROM golang:1.20 AS development
 WORKDIR /app
 RUN go clean --modcache
 COPY go.mod go.sum ./
+RUN git config --global url."https://github.com/1mt142"."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".insteadOf "https://github.com/"
 RUN go mod download
 COPY . .
 RUN go install github.com/cespare/reflex@latest
