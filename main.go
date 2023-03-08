@@ -5,6 +5,7 @@ import (
 	"github.com/1mt142/verifier/controllers"
 	"github.com/1mt142/verifier/initializers"
 	"github.com/gin-gonic/gin"
+	"os"
 )
 
 func init() {
@@ -16,6 +17,9 @@ func main() {
 	fmt.Println("It is ok.")
 	fmt.Println("Hi")
 	r := gin.Default()
+
+	//Get all env variables
+	fmt.Println(os.Environ())
 
 	r.POST("/post", controllers.PostCreate)
 	r.GET("/posts", controllers.GetAllPosts)
