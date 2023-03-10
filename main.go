@@ -11,6 +11,7 @@ import (
 func init() {
 	initializers.LoadEnvVariables()
 	initializers.ConnectToDB()
+	initializers.SyncDatabase()
 }
 
 func main() {
@@ -20,12 +21,14 @@ func main() {
 
 	//Get all env variables
 	fmt.Println(os.Environ())
-
+	// post
 	r.POST("/post", controllers.PostCreate)
 	r.GET("/posts", controllers.GetAllPosts)
 	r.GET("/post/:id", controllers.GetPost)
 	r.PUT("/post/:id", controllers.UpdatePost)
 	r.DELETE("/post/:id", controllers.DeletePost)
+	// user
+	r.POST("/signup", controllers.Signup)
 
 	r.Run()
 }
