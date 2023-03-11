@@ -13,6 +13,7 @@ import (
 func Signup(c *gin.Context) {
 
 	var body struct {
+		Username string
 		Email    string
 		Password string
 	}
@@ -30,7 +31,7 @@ func Signup(c *gin.Context) {
 		})
 		return
 	}
-	user := models.User{Email: body.Email, Password: string(hash)}
+	user := models.User{Email: body.Email, Password: string(hash), Username: body.Username}
 
 	result := initializers.DB.Create(&user)
 	if result.Error != nil {
@@ -58,13 +59,13 @@ func Login(c *gin.Context) {
 	}
 	var user models.User
 	initializers.DB.First(&user, "email=?", body.Email)
-	println("user ", user.ID)
-	if user.ID == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid email or password",
-		})
-		return
-	}
+	//println("user ", user)
+	//if user.ID == 0 {
+	//	c.JSON(http.StatusBadRequest, gin.H{
+	//		"error": "Invalid email or password",
+	//	})
+	//	return
+	//}
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
