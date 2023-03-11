@@ -43,11 +43,11 @@ func Signup(c *gin.Context) {
 	}
 	// Generate OTP
 	otpIs := services.GenerateOTP()
-	// Send OTP
-	err = services.SendOTPViaEmail(body.Email, otpIs, "OTP for user verification in verifier app")
-	if err != nil {
-		fmt.Println(err)
-	}
+	// Send OTP :: TODO stop this service for unusual email sending
+	// err = services.SendOTPViaEmail(body.Email, otpIs, "OTP for user verification in verifier app")
+	// if err != nil {
+	//	fmt.Println(err)
+	//  }
 	// Store OTP
 	otp := models.OTP{Otp: otpIs, Channels: "Email", SenderId: user.ID}
 	otpResult := initializers.DB.Create(&otp)
@@ -103,13 +103,13 @@ func Login(c *gin.Context) {
 	//	return
 	//}
 	//
-
 	// Define the claims for the JWT
 	claims := jwt.MapClaims{
-		"sub":  user.ID,
-		"name": user.Email,
-		"iat":  time.Now().Unix(),
-		"exp":  time.Now().Add(time.Hour * 24 * 30).Unix(),
+		"sub":   user.ID,
+		"name":  user.Username,
+		"email": user.Email,
+		"iat":   time.Now().Unix(),
+		"exp":   time.Now().Add(time.Hour * 24 * 30).Unix(),
 	}
 
 	// Create a new token object with the claims
@@ -132,7 +132,9 @@ func Login(c *gin.Context) {
 	c.SetSameSite(http.SameSiteLaxMode)
 	// name, value string, maxAge int, path, domain string, secure, httpOnly bool
 	c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, false)
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, gin.H{
+		"access_token": tokenString,
+	})
 }
 
 func Validate(c *gin.Context) {

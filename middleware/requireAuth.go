@@ -6,6 +6,7 @@ import (
 	"github.com/1mt142/verifier/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"net/http"
 	"time"
 )
@@ -39,21 +40,34 @@ func RequireAuth(c *gin.Context) {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 		var user models.User
-		result := initializers.DB.First(&user, claims["sub"])
-		//if user.ID == 0 {
-		//	c.AbortWithStatus(http.StatusUnauthorized)
-		//}
+		//result := initializers.DB.First(&user, claims["sub"])
+		result := initializers.DB.Where("id = ?", claims["sub"]).Find(&user)
 
 		if result.Error != nil {
-			// handle error
-			c.AbortWithStatus(http.StatusBadRequest)
+			fmt.Println("Error:", result.Error)
+			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 
-		// new ::TODO : Remove ectra information from response
+		// new
+
+		type User struct {
+			Username  string
+			Id        uuid.UUID `gorm:"type:uuid"`
+			Email     string
+			IsActive  bool
+			CreatedAt time.Time
+			DeletedAt time.Time
+		}
 
 		// end
 
-		c.Set("user", user)
+		c.Set("user", User{
+			Username:  user.Username,
+			Id:        user.ID,
+			Email:     user.Email,
+			IsActive:  user.IsActive,
+			CreatedAt: user.CreatedAt,
+		})
 		c.Next()
 	} else {
 		c.AbortWithStatus(http.StatusUnauthorized)
