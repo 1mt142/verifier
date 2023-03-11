@@ -1,9 +1,12 @@
 package services
 
 import (
+	"crypto/tls"
 	"encoding/base32"
+	"fmt"
 	"math/rand"
 	"net/smtp"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -30,15 +33,18 @@ func GenerateOTP() string {
 }
 
 // SendOTPViaEmail A helper function to send an OTP via email
-func SendOTPViaEmail(email, otp string) error {
-	from := "imtiaz.ucb@gmail.com"
-	password := "lygxmuebtbbkrlys"
+func SendOTPViaEmail(email, otp string, subject string) error {
+	from := os.Getenv("FROM_EMAIL")
+	password := os.Getenv("FROM_EMAIL_PASSWORD")
 	to := email
+
+	fmt.Println("To Email", to)
+	fmt.Println("OTP is ", otp)
 
 	// Compose the email message
 	msg := "From: " + from + "\n" +
 		"To: " + to + "\n" +
-		"Subject: Your OTP for Verifier\n\n" +
+		"Subject: " + subject + "\n\n" +
 		"Your OTP is " + otp
 
 	// Connect to the SMTP server
@@ -51,7 +57,11 @@ func SendOTPViaEmail(email, otp string) error {
 	defer conn.Close()
 
 	// Authenticate with the SMTP server
-	if err = conn.StartTLS(nil); err != nil {
+	config := &tls.Config{
+		InsecureSkipVerify: true,
+	}
+
+	if err = conn.StartTLS(config); err != nil {
 		return err
 	}
 	if err = conn.Auth(auth); err != nil {

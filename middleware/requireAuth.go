@@ -39,12 +39,17 @@ func RequireAuth(c *gin.Context) {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 		var user models.User
-		initializers.DB.First(&user, claims["sub"])
+		result := initializers.DB.First(&user, claims["sub"])
 		//if user.ID == 0 {
 		//	c.AbortWithStatus(http.StatusUnauthorized)
 		//}
 
-		// new
+		if result.Error != nil {
+			// handle error
+			c.AbortWithStatus(http.StatusBadRequest)
+		}
+
+		// new ::TODO : Remove ectra information from response
 
 		// end
 

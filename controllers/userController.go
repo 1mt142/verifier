@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/1mt142/verifier/initializers"
 	"github.com/1mt142/verifier/models"
+	"github.com/1mt142/verifier/services"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -32,7 +34,6 @@ func Signup(c *gin.Context) {
 		return
 	}
 	user := models.User{Email: body.Email, Password: string(hash), Username: body.Username}
-
 	result := initializers.DB.Create(&user)
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -40,6 +41,20 @@ func Signup(c *gin.Context) {
 		})
 		return
 	}
+	// Generate OTP
+	otpIs := services.GenerateOTP()
+	// Send OTP
+	err = services.SendOTPViaEmail(body.Email, otpIs, "OTP for user verification in verifier app")
+	if err != nil {
+		fmt.Println(err)
+	}
+	// Store OTP
+	otp := models.OTP{Otp: otpIs, Channels: "Email", SenderId: user.ID}
+	otpResult := initializers.DB.Create(&otp)
+	if otpResult.Error != nil {
+		fmt.Println("OTP Store Fail")
+	}
+	//
 	c.JSON(http.StatusOK, gin.H{
 		"Message": "User created",
 	})
@@ -58,14 +73,15 @@ func Login(c *gin.Context) {
 		return
 	}
 	var user models.User
-	initializers.DB.First(&user, "email=?", body.Email)
-	//println("user ", user)
-	//if user.ID == 0 {
-	//	c.JSON(http.StatusBadRequest, gin.H{
-	//		"error": "Invalid email or password",
-	//	})
-	//	return
-	//}
+	result := initializers.DB.First(&user, "email=?", body.Email)
+	// check if user was created successfully
+	if result.Error != nil {
+		// handle error
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid email or password",
+		})
+		return
+	}
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
