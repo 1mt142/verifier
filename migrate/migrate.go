@@ -14,7 +14,7 @@ func init() {
 func main() {
 	var err error
 
-	err = initializers.DB.AutoMigrate(&models.User{}, &models.Post{}, &models.OTP{})
+	err = initializers.DB.AutoMigrate(&models.User{}, &models.Post{}, &models.OTP{}, &models.Service{})
 
 	//
 	if err != nil {

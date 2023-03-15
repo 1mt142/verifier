@@ -7,12 +7,14 @@ import (
 	"github.com/1mt142/verifier/services"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"time"
 )
 
 func Signup(c *gin.Context) {
+	log.Info().Msg("Test Log")
 
 	var body struct {
 		Username string
@@ -36,6 +38,7 @@ func Signup(c *gin.Context) {
 	user := models.User{Email: body.Email, Password: string(hash), Username: body.Username}
 	result := initializers.DB.Create(&user)
 	if result.Error != nil {
+		log.Error().Err(result.Error).Msg("DB__CREATE_ERROR")
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Failed to create user",
 		})
@@ -55,6 +58,7 @@ func Signup(c *gin.Context) {
 		fmt.Println("OTP Store Fail")
 	}
 	//
+	c.Set("otp_users", user.ID)
 	c.JSON(http.StatusOK, gin.H{
 		"Message": "User created",
 	})
@@ -145,5 +149,9 @@ func Validate(c *gin.Context) {
 		"message": "You are logged in!",
 		"data":    user,
 	})
+
+}
+
+func OtpVerify(c *gin.Context) {
 
 }

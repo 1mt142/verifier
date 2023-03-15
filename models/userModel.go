@@ -13,7 +13,8 @@ type User struct {
 	Username   string
 	Email      string `gorm:"unique"`
 	Password   string
-	IsActive   bool  `gorm:"default:false"`
-	IsVerified bool  `gorm:"default:false"`
-	Roles      Roles `gorm:"serializer:json"`
+	IsActive   bool       `gorm:"default:false"`
+	IsVerified bool       `gorm:"default:false"`
+	Roles      Roles      `gorm:"serializer:json"`
+	Services   []*Service `gorm:"many2many:user_services;"`
 }
