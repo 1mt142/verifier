@@ -7,6 +7,7 @@ import (
 	"github.com/1mt142/verifier/services"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
@@ -203,7 +204,32 @@ func Validate(c *gin.Context) {
 func GetUsers(c *gin.Context) {
 	var users []models.User
 	initializers.DB.Select("id", "created_at", "username", "email", "is_verified").Find(&users)
+	//
+	type Response struct {
+		Id         uuid.UUID
+		Username   string
+		Email      string
+		IsActive   bool
+		IsVerified bool
+	}
+
+	//var users []models.User
+
+	// Assume that the users slice has been populated with data
+
+	var finalData []Response
+	for _, user := range users {
+		newData := Response{
+			Id:         user.ID,
+			Username:   user.Username,
+			Email:      user.Email,
+			IsActive:   user.IsActive,
+			IsVerified: user.IsVerified,
+		}
+		finalData = append(finalData, newData)
+	}
+	//
 	c.JSON(http.StatusOK, gin.H{
-		"data": users,
+		"data": finalData,
 	})
 }
