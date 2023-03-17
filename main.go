@@ -31,15 +31,19 @@ func main() {
 	//Get all env variables
 	//fmt.Println(os.Environ())
 
-	// post
+	// Post
 	r.POST("/post", controllers.PostCreate)
 	r.GET("/posts", middleware.RequireAuth, controllers.GetAllPosts)
-	r.GET("/post/:id", controllers.GetPost)
-	r.PUT("/post/:id", controllers.UpdatePost)
-	r.DELETE("/post/:id", controllers.DeletePost)
-	// user
+	r.GET("/post/:id", middleware.RequireAuth, controllers.GetPost)
+	r.PUT("/post/:id", middleware.RequireAuth, controllers.UpdatePost)
+	r.DELETE("/post/:id", middleware.RequireAuth, controllers.DeletePost)
+	// Auth
 	r.POST("/signup", controllers.Signup)
 	r.POST("/login", controllers.Login)
+	r.POST("otp-verify", controllers.OtpVerify)
+	// User
+	r.GET("/users", middleware.RequireAuth, controllers.GetUsers)
+	// Random
 	r.GET("/validate", middleware.RequireAuth, controllers.Validate)
 
 	r.Run()
