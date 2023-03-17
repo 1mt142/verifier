@@ -32,19 +32,19 @@ func main() {
 	//fmt.Println(os.Environ())
 
 	// Post
-	r.POST("/post", controllers.PostCreate)
-	r.GET("/posts", middleware.RequireAuth, controllers.GetAllPosts)
-	r.GET("/post/:id", middleware.RequireAuth, controllers.GetPost)
-	r.PUT("/post/:id", middleware.RequireAuth, controllers.UpdatePost)
-	r.DELETE("/post/:id", middleware.RequireAuth, controllers.DeletePost)
+	r.POST("api/v1/post", controllers.PostCreate)
+	r.GET("api/v1/posts", middleware.RequireAuth, controllers.GetAllPosts)
+	r.GET("api/v1/post/:id", middleware.RequireAuth, controllers.GetPost)
+	r.PUT("api/v1/post/:id", middleware.RequireAuth, controllers.UpdatePost)
+	r.DELETE("api/v1/post/:id", middleware.RequireAuth, controllers.DeletePost)
 	// Auth
-	r.POST("/signup", controllers.Signup)
-	r.POST("/login", controllers.Login)
-	r.POST("otp-verify", controllers.OtpVerify)
+	r.POST("api/v1/signup", controllers.Signup)
+	r.POST("api/v1/login", controllers.Login)
+	r.POST("api/v1/otp-verify", controllers.OtpVerify)
 	// User
-	r.GET("/users", middleware.RequireAuth, controllers.GetUsers)
+	r.GET("api/v1/users", middleware.RequireAuth, controllers.GetUsers)
 	// Random
-	r.GET("/validate", middleware.RequireAuth, controllers.Validate)
+	r.GET("api/v1/validate", middleware.RequireAuth, controllers.Validate)
 
 	r.Run()
 }
