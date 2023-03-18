@@ -11,6 +11,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -202,8 +203,26 @@ func Validate(c *gin.Context) {
 }
 
 func GetUsers(c *gin.Context) {
+	var count int64
+	limit := c.Query("limit")
+	offset := c.Query("offset")
+	_limit, err := strconv.Atoi(limit)
+	if err != nil {
+		// handle error
+	}
+	//
+	_offset, err := strconv.Atoi(offset)
+	if err != nil {
+		// handle error
+	}
+
 	var users []models.User
-	initializers.DB.Select("id", "created_at", "username", "email", "is_verified").Find(&users)
+	initializers.DB.
+		Select("id", "created_at", "username", "email", "is_verified").
+		Limit(_limit).
+		Offset(_offset).
+		Find(&users).
+		Count(&count)
 	//
 	type Response struct {
 		Id         uuid.UUID
@@ -230,6 +249,10 @@ func GetUsers(c *gin.Context) {
 	}
 	//
 	c.JSON(http.StatusOK, gin.H{
-		"data": finalData,
+		"count":   count,
+		"limit":   _limit,
+		"offset":  _offset,
+		"data":    finalData,
+		"message": "User results found",
 	})
 }
