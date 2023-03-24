@@ -13,6 +13,7 @@ import (
 func init() {
 	initializers.LoadEnvVariables()
 	initializers.ConnectToDB()
+	initializers.ConnectToRedis()
 	//initializers.SyncDatabase()
 	// Set up Zerolog logger
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
