@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/1mt142/verifier/initializers"
 	"github.com/1mt142/verifier/models"
 )
@@ -14,7 +15,7 @@ func init() {
 func main() {
 	var err error
 
-	err = initializers.DB.AutoMigrate(&models.User{}, &models.Post{}, &models.OTP{}, &models.Service{})
+	err = initializers.DB.AutoMigrate(&models.User{}, &models.Post{}, &models.OTP{}, &models.Service{}, &models.Article{}, &models.Category{}, &models.Tag{})
 
 	//
 	if err != nil {
