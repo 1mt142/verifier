@@ -2,6 +2,8 @@ package models
 
 import "gorm.io/gorm"
 
+// self-referencing hierarchical table using GORM:
+
 type TypeTree struct {
 	gorm.Model
 	Name     string      `json:"name"`
