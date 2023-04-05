@@ -54,6 +54,7 @@ func main() {
 	r.GET("api/v1/article/:id", controllers.FetchArticle)
 	r.GET("api/v1/article/tag/:id", controllers.FetchArticleByTag)
 	r.GET("api/v1/article/category/:id", controllers.FetchArticleByCategory)
+	r.POST("api/v1/level/create",controllers.LavelCreate)
 	r.GET("api/v1/test", func(c *gin.Context) {
 
 		// var user *models.User
